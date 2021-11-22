@@ -1,0 +1,47 @@
+---
+title: SSONext blog - open source projects, open knowledge, shared persistent open revenues, open business data
+description: ButOpen is a community of developers to develop open source projects, share knowledge and revenues from these projects
+permalink: /blog/
+layout: layouts/base
+---
+
+<div>
+    <a href="/"
+       class="flex flex-col items-center hover:no-underline opacity-90 hover:opacity-100">
+        <img class="logo" src="/assets/img/logo.png" alt="ButOpen logo - "/>
+        <h1>
+            <span class="logo-text-light">but</span><span class="logo-text-heavy">open</span>
+        </h1>
+    </a>
+
+    <div class="post-content text-left">
+        <h2>SSONext blog</h2>
+        <p>
+            The process, the design, the business choices are part of our journey.
+            <br>
+            And we want to share it with our community.
+            <br>
+            SSONext is the blog about everything related to the SSONext project: the people, the design, the development, the business.
+        </p>
+
+        {% for post in collections.ssonext %}
+        <a class="post-card" href="{{ post.url | url }}">
+            <img src="{{post.url | url}}{{post.data.image}}"/>
+            <div>
+                <h3>{{ post.data.title }}</h3>
+                <ul class="tags">
+                    {%- for tag in post.data.tags -%}
+                    <li>#{{ tag }}</li>
+                    {%- endfor -%}
+                </ul>
+                <p>
+                    {{post.data.description}}
+                </p>
+
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+    {% include partials/mailing-list.html %}
+</div>

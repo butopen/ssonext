@@ -1,0 +1,22 @@
+---
+layout: layouts/base
+---
+
+
+<div class="max-w-screen-lg mx-auto">
+    <a href="/" class="back-to-link">🠔 Back to <img src="/assets/img/favicon-16x16.png" alt="ButOpen logo - "/>
+        ssonext.com</a>
+</div>
+<div class="post-content ">
+    <h1>{{ title }}</h1>
+    <ul class="tags">
+        {%- for tag in tags -%}
+        <li><a href="/tags/{{ tag }}">#{{ tag }}</a></li>
+        {%- endfor -%}
+    </ul>
+    
+    <img src="{{image}}" alt="{{imageAlt}}" class="post-image" />
+    {{ content | safe }}
+
+    {% include partials/mailing-list.html %}
+</div>

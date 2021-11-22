@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "post";
+@import "typography";
+@import "defaults";
+
+$sm: 640px;
+$md: 768px;
+$lg: 1024px;
+
+.transparent {
+  @apply opacity-0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body, html {
+  font-family: 'Roboto', sans-serif;
+  @apply bg-gradient-to-br from-gray-50 to-white;
+}
+
+body {
+  @apply flex flex-col
+}
+
+.main-root {
+  min-height: 100vh;
+  display: flex;
+
+  .side-bar {
+    @apply px-4 pt-12 text-right border border-gray-200;
+    border-top: 0px !important;
+    border-bottom: 0px !important;
+    border-left: 0px !important;
+
+    .home-link {
+      @apply text-lg pl-0;
+      img {
+        @apply h-10 w-10 inline-block
+      }
+    }
+
+    a {
+      @apply text-gray-600 block mt-4 text-sm pl-4 font-light
+    }
+
+  }
+
+  div:not(.side-bar) {
+    flex: 1;
+  }
+
+}
+
+
+
+footer {
+  @apply bg-white border border-gray-200;
+  border-right: 0px !important;
+  border-bottom: 0px !important;
+  border-left: 0px !important;
+  margin-top: auto;
+  flex: 1;
+
+  .privacy {
+    @apply p-4 flex justify-center mt-12
+  }
+}
+
+
+.logo-font {
+  font-family: 'Rubik', sans-serif;
+}
+
+.hero {
+  @apply flex flex-col justify-center items-center p-16;
+  h1 {
+    @apply mb-12
+  }
+
+  p {
+    @apply text-gray-400 text-center m-1 font-thin;
+
+    max-width: 620px;
+
+    b {
+      @apply text-gray-600;
+    }
+  }
+}
+
+img.logo {
+  @apply w-48
+}
+
+.logo-text-light {
+  @apply text-6xl font-light tracking-widest text-gray-400;
+  @extend .logo-font;
+}
+
+.logo-text-heavy {
+  @apply text-6xl font-black text-gray-700 tracking-widest ;
+  @extend .logo-font
+}
+
+.docs {
+  img {
+    @apply shadow-lg
+  }
+}
+
+

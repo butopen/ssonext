@@ -1,0 +1,8 @@
+node_modules/
+dist
+.idea
+.pnpm-debug.log
+pgdata
+gen
+db-data
+
