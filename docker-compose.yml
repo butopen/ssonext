@@ -1,0 +1,24 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - 5434:5432
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ssonext_localhost_askjhsakjsa-b29183712983
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 5435:8080
+
+networks:
+  default:
+    name: ssonext-network

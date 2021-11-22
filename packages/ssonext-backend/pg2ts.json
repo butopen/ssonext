@@ -1,0 +1,11 @@
+{
+  "mainPrefix": "sn", 
+  "dest": "./src/generated/", 
+  "db": { 
+    "host": "localhost",
+    "user": "ssonext",
+    "password": "ssonext_localhost_askjhsakjsa-b29183712983",
+    "port": 5434,
+    "database": "ssonext"
+  }
+}
