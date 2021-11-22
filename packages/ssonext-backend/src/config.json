@@ -1,0 +1,20 @@
+{
+  "db": {
+    "host": "localhost",
+    "user": "ssonext",
+    "password": "ssonext_localhost_askjhsakjsa-b29183712983",
+    "database": "ssonext",
+    "port": "5434"
+  },
+  "master_password": "ssonext_localhost_askjhsakjsa-b29183712983",
+  "backend_url": "localhost:3000",
+  "email": {
+    "region": "us-east-2",
+    "api_version": "2010-12-01",
+    "aws": {
+      "access_key_id": "AWS_SES_KEY",
+      "secret_access_key": "AWS_ACCESS_KEY"
+    },
+    "default_from": "\"SSONext\" <ssonext@butopen.com>"
+  }
+}
