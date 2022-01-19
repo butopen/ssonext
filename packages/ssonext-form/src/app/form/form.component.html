@@ -1,0 +1,10 @@
+<bo-tabs [(tabIndex)]="activeTabIndex">
+  <bo-tab name="Login">
+    <sn-login-form></sn-login-form>
+    <a class="text-sm my-4 block" (click)="activeTabIndex = 1">Don't have an account yet? Register now</a>
+  </bo-tab>
+  <bo-tab name="Sign-up">
+    <sn-register-form></sn-register-form>
+    <a class="text-sm my-4 block" (click)="activeTabIndex = 0; ">Already have an account? Login now</a>
+  </bo-tab>
+</bo-tabs>

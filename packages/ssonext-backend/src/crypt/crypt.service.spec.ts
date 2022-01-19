@@ -14,5 +14,8 @@ describe('CryptService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+    expect(1).toBe(service.decode(service.encode(1)))
+    expect(1).toBe(service.decode(service.encode(1000)))
+    expect(1).toBe(service.decode(service.encode(2324234)))
   });
 });

@@ -1,0 +1,8 @@
+:host {
+  @apply block max-w-sm
+}
+:host ::ng-deep {
+  .bo-tab {
+    @apply uppercase
+  }
+}

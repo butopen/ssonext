@@ -1,0 +1,11 @@
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import "node_modules/@butopen/bo-design-system/_design-system.scss";
+
+:root {
+  --bo-theme-color: #00d789;
+}
+
+

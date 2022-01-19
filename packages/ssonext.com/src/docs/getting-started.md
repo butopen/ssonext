@@ -8,11 +8,16 @@ layout: layouts/doc
 # Getting started
     
 ## Getting a login/sign-up form on your site
-SSONext is an open source single sign-on solution. The goal we want to achieve is making it possible to have a user management system ready in seconds.
+SSONext is an open source single sign-on solution. 
+The goal we want to achieve is making it possible to have a user management system ready in seconds.
 
 The result will be a form similar to this one:
 
 ![The base SSONext login form](/assets/img/soonext-login-form-example.jpg)
+
+1) Get you code
+2) Integrate on the frontend
+3) (optional) Integrate on the backend
 
 SSONext must be integrated on the frontend and on the backend.
 

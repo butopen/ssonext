@@ -1,0 +1,37 @@
+<form #registerForm="ngForm">
+
+  <label>Name</label>
+  <input type="text" name="name" required #nameInput="ngModel" ngModel>
+  <span *ngIf="nameInput.invalid && nameInput.dirty " class="error">Name is mandatory</span>
+
+  <label>Surname</label>
+  <input type="text" name="surname" #surnameInput="ngModel" ngModel required>
+  <span *ngIf="surnameInput.invalid && surnameInput.dirty " class="error">Surname is mandatory</span>
+
+
+  <label>E-mail</label>
+  <input type="email" name="email" required #emailInput="ngModel" ngModel (blur)="checkEmail(emailInput.value)">
+  <span *ngIf="emailInput.invalid && emailInput.dirty "
+        class="error">E-mail is mandatory</span>
+  <span *ngIf="emailExists" class="error">This e-mail already exists. Did you forget your password?</span>
+
+
+  <label>Password</label>
+  <input type="password" name="password" #passwordInput="ngModel" ngModel required
+         pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$">
+  <span class="error" *ngIf="passwordInput.invalid && passwordInput.dirty">Insert at least a number, a symbol and a capital letter</span>
+  <span *ngIf="passwordInput.value && passwordInput.value.length < 8 && passwordInput.dirty"
+        class="error">Password should have 8 characters</span>
+
+
+  <div class="flex mt-4">
+
+    <button (click)="registerForm.valid && register(registerForm)" class="bo-btn"
+            [class.disabled]="loading || !registerForm.valid || emailExists"
+            type="button">
+      Sign-up
+    </button>
+    <bo-loading *ngIf="loading"></bo-loading>
+  </div>
+
+</form>

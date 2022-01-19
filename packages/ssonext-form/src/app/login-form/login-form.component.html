@@ -1,0 +1,19 @@
+<form #loginForm="ngForm">
+
+  <label>E-mail</label>
+  <input ngModel #emailInput="ngModel" type="email" name="email">
+  <span *ngIf="emailInput.invalid && emailInput.dirty" class="error">E-mail is required</span>
+
+  <label>Password</label>
+  <input ngModel type="password" name="password" #passwordInput="ngModel">
+  <small><a class="text-sm my-4" (click)="showForgotPasswordPopup = true">Forgot password?</a></small>
+  <span *ngIf="passwordInput.invalid && passwordInput.dirty" class="error">Please provide your password</span>
+</form>
+<div class="flex mt-4">
+
+  <button (click)="loginForm.valid && login(loginForm)" class="bo-btn" [class.disabled]="loading || (loginForm.invalid)"
+          type="button">
+    Login
+  </button>
+  <bo-loading *ngIf="loading"></bo-loading>
+</div>

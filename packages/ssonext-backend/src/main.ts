@@ -5,7 +5,8 @@ import {FastifyAdapter} from "@nestjs/platform-fastify";
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, new FastifyAdapter({ logger: true }));
+  const app = await NestFactory.create(AppModule, new FastifyAdapter({ logger: true }), {cors: true});
+  app.setGlobalPrefix('api');
   await app.listen(3000, '0.0.0.0');
 
   if (module.hot) {

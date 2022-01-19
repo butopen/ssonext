@@ -3,7 +3,8 @@ export default {
     "welcome": "Welcome",
     "email.welcome-subject": "Welcome on board",
     "email.welcome-body": `
-    Dear customer,
+    Dear $name,<br>
+    welcome on board.<br>
     Please click on the link below to confirm your registration:<br><br>
     `,
     "password-forgot.email-subject": `$service: password reset request`,

@@ -33,7 +33,8 @@ export class UserService implements TableService, OnModuleInit {
 
     async createUser(user: Omit<SnUser, "userid">) {
         let insertUser = `insert into ${this.tableName} values(DEFAULT,$1,$2,$3,$4,$5,$6) returning userid `
-        return await this.db.query<{ userid: SnUser["userid"] }>(insertUser, [user.email, user.password, user.roles, new Date(), user.tenant, user.info])
+        return await this.db.query<{ userid: SnUser["userid"] }>(insertUser,
+            [user.email, this.crypt.hash(user.password), JSON.stringify(user.roles), new Date(), user.tenant, JSON.stringify(user.info)])
     }
 
     async allUsers(page: number, size: number, tenant: string) {
@@ -87,7 +88,7 @@ export class UserService implements TableService, OnModuleInit {
 
     async countUsersByRole(role: string, tenant: string) {
         const usersCount = `select count(*) from ${this.tableName} where roles ? $1  AND tenant = $2`
-        const result = await this.db.query<{ count: number }>(usersCount, [role,tenant])
+        const result = await this.db.query<{ count: number }>(usersCount, [role, tenant])
         return result[0].count
     }
 

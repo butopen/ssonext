@@ -1,4 +1,4 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Post, Query, Redirect} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Post, Query, Redirect, Headers} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {SNLoginUser, SNUserWithoutId} from "./user.model";
 import {TokenService} from "../token/token.service";
@@ -6,6 +6,7 @@ import {TenantService} from "../tenant/tenant.service";
 import {ConfigService} from "../shared/config.service";
 import {EmailService} from "../email/email.service";
 import {MessageService} from "../message/message.service";
+import {CryptService} from "../crypt/crypt.service";
 
 @Controller('user')
 export class UserController {
@@ -13,6 +14,7 @@ export class UserController {
     constructor(
         private readonly userService: UserService,
         private readonly tokenService: TokenService,
+        private readonly cryptService: CryptService,
         private readonly tenantService: TenantService,
         private readonly configService: ConfigService,
         private readonly emailService: EmailService,
@@ -22,8 +24,9 @@ export class UserController {
 
     @Post("login")
     async login(@Body() user: SNLoginUser, @Query("tenant") tenant: string) {
-        const found = await this.userService.findUser(user.email.trim().toLowerCase(), user.password.trim(), tenant)
-        const tenantConfig = await this.tenantService.configuration(tenant)
+        const t = tenant || "1"
+        const found = await this.userService.findUser(user.email.trim().toLowerCase(), user.password.trim(), t)
+        const tenantConfig = await this.tenantService.configuration(t)
         const informationFields = tenantConfig.informationFieldsInToken
         if (found.length > 0) {
             let information = {}
@@ -35,7 +38,7 @@ export class UserController {
                     information[f] = found[0].info[f]
             }
             const token = this.tokenService.generate({
-                id: found[0].userid,
+                id: this.cryptService.encode(found[0].userid),
                 email: user.email,
                 roles: found[0].roles,
                 information
@@ -49,9 +52,24 @@ export class UserController {
     @Post("request-registration")
     async register(@Body() user: SNUserWithoutId, @Query("tenant") t: string) {
         const tenant = this.verifyTenant(t, user);
-        const token = this.tokenService.generate({user, tenant})
-        console.log("token: ", token)
         const tenantConfig = await this.tenantService.configuration(tenant)
+        const info = {...user}
+        delete info.email
+        delete info.password
+        delete info.tenant
+        delete info.created
+        delete info.roles
+        const nonRegisteredUser: SNUserWithoutId = {
+            info,
+            email: user.email,
+            roles: ["UNCONFIRMED_EMAIL"],
+            password: user.password,
+            tenant,
+            created: new Date()
+        }
+        const result = await this.userService.createUser(nonRegisteredUser)
+        const token = this.tokenService.generate({user, userid: result[0].userid, tenant})
+        console.log("token: ", token)
         const link = this.configService.backend_url + "/api/user/register?token=" + token
         await this.emailService.send(user.email, this.messageService.get("email.welcome-subject"), `
         
@@ -65,14 +83,17 @@ export class UserController {
 
     @Redirect('https://ssonext.com/error', 302)
     @Get("register")
-    async confirmRegistration(token: string) {
+    async confirmRegistration(@Query("token") token: string) {
         try {
-            let data = this.tokenService.verify(token) as unknown as { user: SNUserWithoutId, tenant: string, roles: string[] }
+            let data = this.tokenService.verify(token) as unknown as { user: SNUserWithoutId, tenant: string, roles: string[], userid: number }
             console.log("data: ", data)
             const user = data.user
             user.email = user.email.trim().toLowerCase()
             user.password = user.password.trim()
-            await this.userService.createUser({...user, tenant: data.tenant, roles: data.roles || ['USER']})
+            const foundUsers = await this.userService.findUserById(data.userid, data.tenant)
+            if (foundUsers.length == 0)
+                throw new HttpException(`Cannot find this user: ${token}`, 404)
+            await this.userService.updateUserRoles(data.userid, ["EMAIL_CONFIRMED", "USER"], data.tenant)
             console.log("user saved into db")
             return {url: this.configService.backend_url + "/pages/registration-welcome?registered=" + token}
         } catch {
@@ -103,15 +124,14 @@ export class UserController {
     }
 
     @Get("email-exists")
-    async checkEmail(email: string, tenant: string) {
-        let exists = await this.userService.userWithEmailExists(email.trim().toLowerCase(), tenant)
+    async checkEmail(@Query("email") email: string, @Headers("tenant") tenant: string) {
+        const t = tenant || "1"
+        let exists = await this.userService.userWithEmailExists(email.trim().toLowerCase(), t)
         return {exists}
     }
 
     private verifyTenant(t: string, user: SNUserWithoutId) {
-        const tenant = user?.tenant ?? t
-        if (!tenant)
-            new HttpException("Tenant not specified. See https://ssonext.com/docs/register#tenant", HttpStatus.PRECONDITION_REQUIRED)
+        const tenant = user?.tenant ?? t ?? "1"
         return tenant;
     }
 
