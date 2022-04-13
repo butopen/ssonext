@@ -39,7 +39,7 @@ const messages = loadMessages();
     TenantService,
     UserService,
     UserController
-  ]
+  ],
 })
 export class AppModule {
 }

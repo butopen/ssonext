@@ -2,7 +2,6 @@
  * AUTO-GENERATED FILE @ Thu, 24 Mar 2022 11:09:12 GMT
  */
 
-
 export interface SnTenant {
   tenantid: string;
   email?: string | null;
@@ -23,8 +22,8 @@ export interface SnUser {
 }
 
 export interface GdbTables {
-  sn_tenant: SnTenant,
-  sn_user: SnUser
+  sn_tenant: SnTenant;
+  sn_user: SnUser;
 }
 
 export const GdbTablesData = {

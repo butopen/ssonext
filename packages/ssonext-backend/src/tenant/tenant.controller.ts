@@ -112,7 +112,7 @@ export class TenantController {
 
 <p>Sincerely, <br>The SSONext team</p>
       
-      `
+      `,
     );
     return { email_sent: true };
   }
