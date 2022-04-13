@@ -35,7 +35,7 @@ export const GdbTablesData = {
     status: 'sn_tenant.status',
     service: 'sn_tenant.service',
     data: 'sn_tenant.data',
-    created: 'sn_tenant.created'
+    created: 'sn_tenant.created',
   },
   sn_user: {
     tableName: 'sn_user',
@@ -45,6 +45,6 @@ export const GdbTablesData = {
     roles: 'sn_user.roles',
     created: 'sn_user.created',
     tenant: 'sn_user.tenant',
-    info: 'sn_user.info'
-  }
+    info: 'sn_user.info',
+  },
 };

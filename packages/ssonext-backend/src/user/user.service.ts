@@ -13,9 +13,8 @@ export class UserService implements TableService, OnModuleInit {
   constructor(
     private db: DB,
     private crypt: CryptService,
-    private tenantService: TenantService
-  ) {
-  }
+    private tenantService: TenantService,
+  ) {}
 
   async onModuleInit() {
     await this.generateTable();
@@ -54,7 +53,7 @@ export class UserService implements TableService, OnModuleInit {
       JSON.stringify(user.roles),
       new Date(),
       user.tenant,
-      JSON.stringify(user.info ?? {})
+      JSON.stringify(user.info ?? {}),
     ]);
   }
 
@@ -72,7 +71,7 @@ export class UserService implements TableService, OnModuleInit {
   async updateUserInformation(
     userid: SnUser['userid'],
     information: unknown,
-    tenant: string
+    tenant: string,
   ) {
     const updateRoles = `update ${this.tableName} set info = $1 where userid = $2 AND tenant = $3`;
     return await this.db.query(updateRoles, [information, userid, tenant]);
@@ -81,13 +80,13 @@ export class UserService implements TableService, OnModuleInit {
   async updateUserRoles(
     userid: SnUser['userid'],
     roles: string[],
-    tenant: string
+    tenant: string,
   ) {
     const updateRoles = `update ${this.tableName} set roles = $1 where userid = $2 AND tenant = $3`;
     return await this.db.query(updateRoles, [
       JSON.stringify(roles),
       userid,
-      tenant
+      tenant,
     ]);
   }
 
@@ -127,14 +126,14 @@ export class UserService implements TableService, OnModuleInit {
     role: string,
     page: number,
     size: number,
-    tenant: string
+    tenant: string,
   ) {
     const findByRole = `select * from ${this.tableName} where roles ? $3  AND tenant = $4 limit $1 offset $2 `;
     return await this.db.query<SnUser>(findByRole, [
       size,
       page * size,
       role,
-      tenant
+      tenant,
     ]);
   }
 
@@ -142,7 +141,7 @@ export class UserService implements TableService, OnModuleInit {
     const usersCount = `select count(*) from ${this.tableName} where roles ? $1  AND tenant = $2`;
     const result = await this.db.query<{ count: number }>(usersCount, [
       role,
-      tenant
+      tenant,
     ]);
     return result[0].count;
   }
@@ -150,13 +149,13 @@ export class UserService implements TableService, OnModuleInit {
   async resetUserPassword(
     userid: SnUser['userid'],
     password: string,
-    tenant: string
+    tenant: string,
   ) {
     const resetPassword = `update ${this.tableName} set password = $1 where userid = $2  AND tenant = $3`;
     return await this.db.query(resetPassword, [
       this.crypt.hash(password),
       userid,
-      tenant
+      tenant,
     ]);
   }
 

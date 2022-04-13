@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import './index.scss';
   import AuthForm from './components/auth-form.svelte';
   import GettingStarted from './components/getting-started/getting-started.svelte';
@@ -14,8 +14,7 @@
     const match = /app\/t\/(\w+)/.exec(window.location.href);
     code = match[1];
     hasCode = true;
-  } catch {
-  }
+  } catch {}
 </script>
 
 <!--
@@ -32,9 +31,9 @@
   <PasswordReset />
 {/if}
 
-<style lang='scss'>
+<style lang="scss">
   :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 </style>

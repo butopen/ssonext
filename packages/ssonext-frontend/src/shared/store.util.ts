@@ -26,19 +26,19 @@ function isNode(o) {
   return typeof Node === 'object'
     ? o instanceof Node
     : o &&
-    typeof o === 'object' &&
-    typeof o.nodeType === 'number' &&
-    typeof o.nodeName === 'string';
+        typeof o === 'object' &&
+        typeof o.nodeType === 'number' &&
+        typeof o.nodeName === 'string';
 }
 
 function isElement(o) {
   return typeof HTMLElement === 'object'
     ? o instanceof HTMLElement //DOM2
     : o &&
-    typeof o === 'object' &&
-    o !== null &&
-    o.nodeType === 1 &&
-    typeof o.nodeName === 'string';
+        typeof o === 'object' &&
+        o !== null &&
+        o.nodeType === 1 &&
+        typeof o.nodeName === 'string';
 }
 
 function serializer(replacer?, cycleReplacer?) {
@@ -46,12 +46,12 @@ function serializer(replacer?, cycleReplacer?) {
     keys: any[] = [];
 
   if (cycleReplacer == null)
-    cycleReplacer = function(key, value) {
+    cycleReplacer = function (key, value) {
       if (stack[0] === value) return '[Circular ~]';
       return '[Circular ~.' + keys.slice(0, stack.indexOf(value)).join('.') + ']';
     };
 
-  return function(key, value) {
+  return function (key, value) {
     if (stack.length > 0) {
       const thisPos = stack.indexOf(this);
       ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);

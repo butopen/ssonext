@@ -7,7 +7,7 @@ export abstract class DB {
   abstract query<T>(
     q: string,
     params?: (string | number | Date | unknown)[],
-    options?: { skipLogging: boolean }
+    options?: { skipLogging: boolean },
   ): Promise<T[]>;
 
   abstract withConnection<T>(action: (connection) => any): Promise<T[]>;
@@ -33,15 +33,15 @@ export class PostgresDbService implements DB {
     this.pool = new Pool({
       ...this.configuration,
       ssl: {
-        rejectUnauthorized: false
-      }
+        rejectUnauthorized: false,
+      },
     });
   }
 
   async query(
     q: string,
     params?: any[],
-    options = { skipLogging: false, skipLoggingResult: true }
+    options = { skipLogging: false, skipLoggingResult: true },
   ): Promise<any[]> {
     if (!options.skipLogging) {
       console.log(`QUERY: ${q}`);

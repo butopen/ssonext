@@ -5,9 +5,8 @@ import { DB, PostgresDbService } from './postgres-db.service';
 @Module({
   providers: [
     { provide: DB, useValue: new PostgresDbService(globalConfig.db) },
-    ConfigService
+    ConfigService,
   ],
-  exports: [DB, ConfigService]
+  exports: [DB, ConfigService],
 })
-export class SharedModule {
-}
+export class SharedModule {}

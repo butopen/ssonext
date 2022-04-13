@@ -23,7 +23,7 @@ function initGlobalConfig() {
     SSO_EMAIL_AWS_ACCESS_KEY_ID,
     SSO_EMAIL_AWS_SECRET_ACCESS_KEY,
     SSO_DEFAULT_FROM,
-    SSO_DEFAULT_COLOR
+    SSO_DEFAULT_COLOR,
   } = process.env;
 
   return {
@@ -32,7 +32,7 @@ function initGlobalConfig() {
       user: DB_USRENAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      port: +DB_PORT
+      port: +DB_PORT,
     },
     master_password: SSO_MASTER_PASSWORD,
     backend_url: SSO_BACKEND_URL,
@@ -40,12 +40,12 @@ function initGlobalConfig() {
     email: {
       aws: {
         access_key_id: SSO_EMAIL_AWS_ACCESS_KEY_ID,
-        secret_access_key: SSO_EMAIL_AWS_SECRET_ACCESS_KEY
+        secret_access_key: SSO_EMAIL_AWS_SECRET_ACCESS_KEY,
       },
       api_version: SSO_EMAIL_AWS_API_VERSION,
       default_from: SSO_DEFAULT_FROM,
-      region: SSO_EMAIL_AWS_REGION
-    }
+      region: SSO_EMAIL_AWS_REGION,
+    },
   };
 }
 

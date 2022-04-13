@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import { loggedWritable } from '../../shared/store.util';
   import { fade } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
@@ -27,7 +27,7 @@
   }
 </script>
 
-<div class='my-4 text-sm text-gray-500'>
+<div class="my-4 text-sm text-gray-500">
   <h2>Step 1: subscribe with your email</h2>
   <h3>Why we need your e-mail?</h3>
   <ul>
@@ -36,28 +36,28 @@
   </ul>
 </div>
 
-<div class='my-12 flex items-center '>
+<div class="my-12 flex items-center ">
   <input
-    class='bo-input'
-    placeholder='Your email'
-    name='email'
-    type='email'
+    class="bo-input"
+    placeholder="Your email"
+    name="email"
+    type="email"
     required
     on:keyup={(e) => e.key === 'Enter' && register()}
     bind:value={$subscribeStore.email} />
-  <button class='bo-button lg ml-2' on:click={register}>START</button>
+  <button class="bo-button lg ml-2" on:click={register}>START</button>
 </div>
 
 {#if $subscribeStore.emailEmpty}
-  <div transition:fade class='bo-box-error mt-4'>* An email should be provided</div>
+  <div transition:fade class="bo-box-error mt-4">* An email should be provided</div>
 {/if}
 {#if $subscribeStore.emailError}
-  <div transition:fade class='bo-box-error mt-4'>
+  <div transition:fade class="bo-box-error mt-4">
     * Please check your email for errors
   </div>
 {/if}
 {#if $subscribeStore.emailRegistered}
-  <div transition:fade class='bo-box-success mt-4'>
+  <div transition:fade class="bo-box-success mt-4">
     We sent you an email. Please check to proceed to step 2.
   </div>
 {/if}

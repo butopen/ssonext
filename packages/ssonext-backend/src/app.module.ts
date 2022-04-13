@@ -22,7 +22,7 @@ const messages = loadMessages();
     AppController,
     UserController,
     UserAPIController,
-    TenantController
+    TenantController,
   ],
   providers: [
     AppService,
@@ -30,16 +30,15 @@ const messages = loadMessages();
     { provide: EmailService, useValue: new EmailService(globalConfig.email) },
     {
       provide: CryptService,
-      useValue: new CryptService(globalConfig.master_password)
+      useValue: new CryptService(globalConfig.master_password),
     },
     {
       provide: TokenService,
-      useValue: new TokenService(globalConfig.master_password)
+      useValue: new TokenService(globalConfig.master_password),
     },
     TenantService,
     UserService,
-    UserController
+    UserController,
   ],
 })
-export class AppModule {
-}
+export class AppModule {}

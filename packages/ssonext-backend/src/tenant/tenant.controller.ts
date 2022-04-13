@@ -5,7 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  Query
+  Query,
 } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { TokenService } from '../token/token.service';
@@ -27,9 +27,8 @@ export class TenantController {
     private userController: UserController,
     private userService: UserService,
     private configService: ConfigService,
-    private crypt: CryptService
-  ) {
-  }
+    private crypt: CryptService,
+  ) {}
 
   @Post('service')
   async updateService(@Body() service: ServiceData, @Tenant() tenant: string) {
@@ -49,23 +48,23 @@ export class TenantController {
     const postgresPassword = this.crypt.generateRandomPassword();
     await this.tenantService.createTenantPostgresUser({
       tenant: tenantId,
-      password: postgresPassword
+      password: postgresPassword,
     });
     const user = {
       email,
       tenant: tenantId,
       password,
       roles: ['ADMIN', 'EMAIL_CONFIRMED', 'TENANT_OWNER'],
-      info: {}
+      info: {},
     } as SNUser;
     await this.userService.createUser(user);
     const result = await this.userController.login(
       { email, password },
-      tenantId
+      tenantId,
     );
     const passwordToken = this.tokenService.generate({
       password,
-      postgresPassword
+      postgresPassword,
     });
     return { data: passwordToken, token: result.token };
   }
@@ -80,14 +79,14 @@ export class TenantController {
           status: HttpStatus.CONFLICT,
           error: true,
           code: 'email-exists',
-          tenant: t.tenantid
+          tenant: t.tenantid,
         },
-        HttpStatus.CONFLICT
+        HttpStatus.CONFLICT,
       );
     }
     const token = this.tokenService.generate({
       email,
-      scope: 'tenant-confirm'
+      scope: 'tenant-confirm',
     });
     await this.emailService.send(
       email,

@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import { loggedWritable } from '../shared/store.util';
   import { createEventDispatcher } from 'svelte';
   import { queryParams } from '../shared/url-params.service';
@@ -37,37 +37,37 @@
   }
 </script>
 
-<div class='password-reset sso-section mt-8'>
+<div class="password-reset sso-section mt-8">
   <h1>Reset your password</h1>
   <p>Please choos a new password below</p>
   <input
-    type='password'
-    name='password'
-    class='bo-input mt-2'
-    placeholder='Password'
+    type="password"
+    name="password"
+    class="bo-input mt-2"
+    placeholder="Password"
     bind:value={$store.password} />
   <input
-    type='password'
-    name='confirmedPassword'
-    class='bo-input mt-2'
-    placeholder='Confirm your password'
+    type="password"
+    name="confirmedPassword"
+    class="bo-input mt-2"
+    placeholder="Confirm your password"
     bind:value={$store.confirmedPassword} />
   <button
-    class='bo-button mt-2'
+    class="bo-button mt-2"
     class:disabled={!$store.password || $store.password != $store.confirmedPassword}
     on:click={onResetPassword}>
     Reset password
   </button>
 
   {#if $store.passwordEmpty}
-    <div class='bo-box-error'>* Please specify a password</div>
+    <div class="bo-box-error">* Please specify a password</div>
   {/if}
   {#if $store.passwordDoNotMatch}
-    <div class='bo-box-error'>* Password should match</div>
+    <div class="bo-box-error">* Password should match</div>
   {/if}
 </div>
 
-<style lang='scss'>
+<style lang="scss">
   .password-reset {
     @apply mx-auto block;
     max-width: 560px;

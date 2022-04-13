@@ -7,7 +7,7 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import {
   FastifyAdapter,
-  NestFastifyApplication
+  NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { EmailService } from '../../src/email/email.service';
 import { TenantService } from '../../src/tenant/tenant.service';
@@ -19,14 +19,14 @@ const email = 'info-test@thefrontendteam.com';
 
 beforeAll(async () => {
   const moduleRef = await Test.createTestingModule({
-    imports: [AppModule]
+    imports: [AppModule],
   })
     .overrideProvider(EmailService)
     .useValue(emailMock)
     .compile();
 
   app = moduleRef.createNestApplication<NestFastifyApplication>(
-    new FastifyAdapter()
+    new FastifyAdapter(),
   );
   await app.init();
   await app.getHttpAdapter().getInstance().ready();
@@ -43,11 +43,11 @@ test('tenant should be created after email confirmation', async () => {
   const ts = app.get(TokenService);
   const token = ts.generate({
     email,
-    scope: 'tenant-confirm'
+    scope: 'tenant-confirm',
   });
   const responseToConfirm = await app.inject({
     method: 'GET',
-    url: `/tenant/confirm?token=${token}`
+    url: `/tenant/confirm?token=${token}`,
   });
   const receivedToken = responseToConfirm.json().token;
   const receivedPassword = responseToConfirm.json().password;
@@ -68,7 +68,7 @@ test('tenant should be created after email confirmation', async () => {
 test('tenant registers', async () => {
   const responseToSubscribe = await app.inject({
     method: 'GET',
-    url: `/tenant/subscribe?email=${email}`
+    url: `/tenant/subscribe?email=${email}`,
   });
   expect(responseToSubscribe.json().email_sent).toBe(true);
   expect(emailMock.send.mock.calls.length).toBe(1);

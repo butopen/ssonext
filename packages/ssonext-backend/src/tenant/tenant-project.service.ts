@@ -7,8 +7,7 @@ import { TenantData } from '../shared/ssonext.model';
 export class TenantProjectService {
   private tableName = 'sn_tenantproject';
 
-  constructor(private db: DB) {
-  }
+  constructor(private db: DB) {}
 
   async onModuleInit() {
     await this.generateTable();
@@ -32,7 +31,7 @@ export class TenantProjectService {
     const result = await this.db.query<{ tenantid: string }>(q, [
       'active',
       tenantData,
-      new Date()
+      new Date(),
     ]);
     return result[0].tenantid;
   }

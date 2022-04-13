@@ -8,7 +8,7 @@ import {
   Query,
   Redirect,
   Headers,
-  Injectable
+  Injectable,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SNLoginUser, SNUserWithoutId } from './user.model';
@@ -29,16 +29,15 @@ export class UserController {
     private readonly tenantService: TenantService,
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
-    private readonly messageService: MessageService
-  ) {
-  }
+    private readonly messageService: MessageService,
+  ) {}
 
   @Post('login')
   async login(@Body() user: SNLoginUser, @Query('tenant') tenant: string) {
     const found = await this.userService.findUser(
       user.email.trim().toLowerCase(),
       user.password.trim(),
-      tenant
+      tenant,
     );
     const tenantConfig = await this.tenantService.configuration(tenant);
     const informationFields = tenantConfig.informationFieldsInToken;
@@ -53,7 +52,7 @@ export class UserController {
         id: this.cryptService.encode(found[0].userid),
         email: user.email,
         roles: found[0].roles,
-        information
+        information,
       });
       return { token };
     } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -75,13 +74,13 @@ export class UserController {
       roles: ['UNCONFIRMED_EMAIL'],
       password: user.password,
       tenant,
-      created: new Date()
+      created: new Date(),
     };
     const result = await this.userService.createUser(nonRegisteredUser);
     const token = this.tokenService.generate({
       user,
       userid: result[0].userid,
-      tenant
+      tenant,
     });
     console.log('token: ', token);
     const link =
@@ -95,7 +94,7 @@ export class UserController {
         
         ${link}
         
-        `
+        `,
     );
     return { ok: true };
   }
@@ -116,28 +115,28 @@ export class UserController {
       user.password = user.password.trim();
       const foundUsers = await this.userService.findUserById(
         data.userid,
-        data.tenant
+        data.tenant,
       );
       if (foundUsers.length == 0)
         throw new HttpException(`Cannot find this user: ${token}`, 404);
       await this.userService.updateUserRoles(
         data.userid,
         ['EMAIL_CONFIRMED', 'USER'],
-        data.tenant
+        data.tenant,
       );
       console.log('user saved into db');
       return {
         url:
           this.configService.backend_url +
           '/pages/registration-welcome?registered=' +
-          token
+          token,
       };
     } catch {
       return {
         url:
           this.configService.backend_url +
           '/pages/registration-welcome?error=' +
-          token
+          token,
       };
     }
   }
@@ -145,7 +144,7 @@ export class UserController {
   @Get('forgot-password')
   async forgotPassword(
     @Query('email') email: string,
-    @Query('tenant') tenant: string
+    @Query('tenant') tenant: string,
   ) {
     const tconf = await this.tenantService.configuration(tenant);
     const token = this.tokenService.generate({ email, tenant });
@@ -156,12 +155,12 @@ export class UserController {
     await this.emailService.send(
       email.trim().toLowerCase(),
       this.messageService.get('password-forgot.email-subject', {
-        service: tconf.serviceName
+        service: tconf.serviceName,
       }),
       this.messageService.get('password-forgot.email-body', {
         service: tconf.serviceName,
-        link
-      })
+        link,
+      }),
     );
     return { ok: true };
   }
@@ -171,12 +170,12 @@ export class UserController {
     const token = this.tokenService.verify(resetData.token);
     let user = await this.userService.findUserByEmail(
       token.email.trim().toLowerCase(),
-      token.tenant
+      token.tenant,
     );
     await this.userService.resetUserPassword(
       user[0].userid,
       resetData.password.trim(),
-      token.tenant
+      token.tenant,
     );
     return { ok: true };
   }
@@ -184,12 +183,12 @@ export class UserController {
   @Get('email-exists')
   async checkEmail(
     @Query('email') email: string,
-    @Headers('tenant') tenant: string
+    @Headers('tenant') tenant: string,
   ) {
     const t = tenant || '1';
     let exists = await this.userService.userWithEmailExists(
       email.trim().toLowerCase(),
-      t
+      t,
     );
     return { exists };
   }

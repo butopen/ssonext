@@ -14,7 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(
     AppModule,
     new FastifyAdapter({ logger: true }),
-    { cors: true }
+    { cors: true },
   );
   console.log('APP_SERVICE_URL', process.env.APP_SERVICE_URL);
 
@@ -32,11 +32,11 @@ async function bootstrap() {
         {
           target: process.env.APP_SERVICE_URL,
           secure: false,
-          changeOrigin: true
+          changeOrigin: true,
         },
         (err) => {
           console.log('err: ', err);
-        }
+        },
       );
     } else {
       next();

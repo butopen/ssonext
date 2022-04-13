@@ -8,8 +8,7 @@ import { SnTenant } from '../generated/gdb-ssonext-test-tables';
 export class TenantService {
   private tableName = 'sn_tenant';
 
-  constructor(private db: DB) {
-  }
+  constructor(private db: DB) {}
 
   async onModuleInit() {
     await this.generateTable();
@@ -42,9 +41,9 @@ export class TenantService {
   }
 
   async createTenantPostgresUser({
-                                   tenant,
-                                   password
-                                 }: {
+    tenant,
+    password,
+  }: {
     tenant: string;
     password: string;
   }) {
@@ -62,7 +61,7 @@ GRANT SELECT ON sn_user TO "${tenant}";
       'active',
       null,
       {},
-      new Date()
+      new Date(),
     ]);
     return result[0].tenantid;
   }

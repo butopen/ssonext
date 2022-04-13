@@ -1,4 +1,4 @@
-<script lang='ts'>
+<script lang="ts">
   import { loggedWritable } from '../../shared/store.util';
   import SubscribeStep from './subscribe-step.svelte';
   import { forgotPassword, subscribeTenant } from '../../services/api.service';
@@ -39,33 +39,33 @@
   }
 </script>
 
-<div class='flex justify-center'>
-  <div class='getting-started'>
+<div class="flex justify-center">
+  <div class="getting-started">
     <div>
-      <h1 class='my-8 text-3xl font-black text-gray-700'>Get started in 3 steps</h1>
-      <div class='bo-steps'>
+      <h1 class="my-8 text-3xl font-black text-gray-700">Get started in 3 steps</h1>
+      <div class="bo-steps">
         {#each $gettingStartedStore.steps as step}
           <div class={'bo-step-' + step.status}>{step.name}</div>
         {/each}
       </div>
     </div>
 
-    <div class='step-content sso-section'>
+    <div class="step-content sso-section">
       {#if $gettingStartedStore.activeStep == 0}
         <SubscribeStep on:email-change={onEmailChange} />
       {/if}
       {#if $gettingStartedStore.emailExists}
-        <div class='bo-box-error'>
+        <div class="bo-box-error">
           * This email already exists. If you forgot your password, click below:
           <br />
-          <a class='bo-link' on:click={onForgotPassword}>Forgot password</a>
+          <a class="bo-link" on:click={onForgotPassword}>Forgot password</a>
         </div>
       {/if}
     </div>
   </div>
 </div>
 
-<style lang='scss'>
+<style lang="scss">
   .getting-started {
     @apply mx-auto flex flex-col flex-wrap items-center p-4 md:flex-row;
     min-height: 560px;

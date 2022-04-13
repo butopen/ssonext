@@ -11,7 +11,7 @@ export const createMockProxy = <T>() => {
       }
 
       return cache.get(name);
-    }
+    },
   };
   return new Proxy({}, handler) as jest.Mocked<T> & { mockClear(): void };
 };

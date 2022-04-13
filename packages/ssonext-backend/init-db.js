@@ -6,7 +6,7 @@ const password = 'ssonext_localhost_askjhsakjsa-b29183712983';
     user: 'postgres',
     password,
     database: 'postgres',
-    port: 5434
+    port: 5434,
   });
 
   let client = await pool.connect();
@@ -17,7 +17,7 @@ const password = 'ssonext_localhost_askjhsakjsa-b29183712983';
     `
     create user ssonext with encrypted password '${password}';
     ALTER ROLE ssonext WITH CREATEROLE;
-    `
+    `,
   );
   await client.query('create database ssonext;');
   await client.query('grant all privileges on database ssonext to ssonext;');
