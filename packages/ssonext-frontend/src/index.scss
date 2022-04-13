@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "node_modules/@butopen/design-system/src/index";
+
+:root {
+  --bo-theme-color: #00d789;
+}
+
+.bo-tab {
+  @apply uppercase text-sm
+}
+
+a {
+  @extend .bo-link;
+  @apply text-bop;
+}
+
+body {
+  @extend .use-bo-design-system
+}
+
+.sso-section {
+  @apply rounded border border-bop p-8
+}

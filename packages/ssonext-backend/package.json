@@ -6,6 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "new:c": "node run \"nest g controller $controller\" -- ",
+    "new:s": "node run \"nest g service $service\" -- ",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -33,7 +35,9 @@
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "dotenv": "^16.0.0",
+    "http-proxy": "^1.18.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
