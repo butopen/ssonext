@@ -14,15 +14,15 @@ async function bootstrap() {
   const app = await NestFactory.create(
     AppModule,
     new FastifyAdapter({ logger: true }),
-    { cors: true },
   );
   console.log('APP_SERVICE_URL', process.env.APP_SERVICE_URL);
 
-  function logger(req: Request, res: Response, next) {
+  function logger(req, res, next) {
     console.log(`Request...`, req.url);
     if (
       req.url.startsWith('/app') ||
       req.url.startsWith('/@vite') ||
+      req.url.startsWith('/@fs') ||
       req.url.startsWith('/src') ||
       req.url.startsWith('/node_modules')
     ) {
@@ -32,7 +32,6 @@ async function bootstrap() {
         {
           target: process.env.APP_SERVICE_URL,
           secure: false,
-          changeOrigin: true,
         },
         (err) => {
           console.log('err: ', err);
@@ -44,9 +43,10 @@ async function bootstrap() {
   }
 
   app.use(logger);
+  app.enableCors();
 
   app.setGlobalPrefix('api');
-  await app.listen(3000, '0.0.0.0');
+  await app.listen(3003, '0.0.0.0');
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());

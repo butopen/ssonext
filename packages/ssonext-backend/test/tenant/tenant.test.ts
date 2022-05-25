@@ -41,7 +41,7 @@ test('test creating tenant', async () => {
   const token = t.generate({ email: 'info@thefrontendteam.com' });
   const tc = new TenantController(email, t, ts, uc, us, new CryptService());
 
-  const result = await tc.confirm(token);
+  const result = await tc.confirm();
   expect(ts.create.mock.calls.length).toBe(1);
   console.log('result: ', result);
   expect(result.token).toBe('1');

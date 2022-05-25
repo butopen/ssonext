@@ -1,6 +1,12 @@
 export class HttpService {
-  constructor(private baseUrl: string, private tokenKey = 'TOKEN') {
-  }
+  constructor(
+    private baseUrl: string,
+    private tokenKey = 'TOKEN',
+    private options = {
+      beforeRequest: () => {},
+      afterRequest: () => {}
+    }
+  ) {}
 
   async get(url: string, progress?: (percentage, loaded?, total?) => void) {
     try {
@@ -30,6 +36,23 @@ export class HttpService {
     loginRequired = false,
     progress?: (percentage, loaded?, total?) => void
   ) {
+    const onBefore = () => {
+      if (this.options?.beforeRequest) {
+        try {
+          this.options?.beforeRequest();
+        } catch {}
+      }
+    };
+    const onAfter = () => {
+      if (this.options?.afterRequest) {
+        try {
+          this.options?.afterRequest();
+        } catch {}
+      }
+    };
+
+    onBefore();
+
     const options: any = {
       method: request.method,
       headers: { ...request.headers }
@@ -70,6 +93,7 @@ export class HttpService {
             progress(1); // indicate request has finished to non supported progress requests
           }
           res(result);
+          onAfter();
         } else {
           let result = xhr.response;
           try {
@@ -79,6 +103,7 @@ export class HttpService {
             //ignore
           }
           rej({ statusText: xhr.statusText, status: xhr.status, response: result });
+          onAfter();
         }
       };
       xhr.onerror = () => rej(xhr.statusText);
@@ -86,6 +111,7 @@ export class HttpService {
         request.method == 'POST' ? xhr.send(options.body) : xhr.send();
       } catch (e) {
         rej(e);
+        onAfter();
       }
     });
 

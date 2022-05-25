@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@butopen/design-system': ^1.0.4
+  '@butopen/design-system': ^1.0.8
   '@sveltejs/vite-plugin-svelte': ^1.0.0-next.30
   '@tsconfig/svelte': ^2.0.1
   '@types/jest': ^27.4.1
@@ -21,7 +21,7 @@ specifiers:
   vite: ^2.8.0
 
 dependencies:
-  '@butopen/design-system': 1.0.4
+  '@butopen/design-system': 1.0.8
 
 devDependencies:
   '@sveltejs/vite-plugin-svelte': 1.0.0-next.40_svelte@3.46.4+vite@2.8.6
@@ -374,8 +374,8 @@ packages:
     resolution: { integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw== }
     dev: true
 
-  /@butopen/design-system/1.0.4:
-    resolution: { integrity: sha512-2iR8X2Ddhnb8LNiLRzuK0pkpze+7U/A3Vf1i4FQGotZuBTE9C14fSW0RpeTk4MM/GsL/GN1lIz4QtR9WkWa6Tw== }
+  /@butopen/design-system/1.0.8:
+    resolution: { integrity: sha512-eJQLRDiw4BSvOLcxXJad88ZhVwNpZkn5bk7URLJVi2CmsFTxQ8/1Tdv681lMmMaTYySOUVU+E5X9OLgAv691hw== }
     dev: false
 
   /@istanbuljs/load-nyc-config/1.1.0:

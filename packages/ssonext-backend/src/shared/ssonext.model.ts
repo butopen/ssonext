@@ -1,3 +1,5 @@
+import { ServiceData } from '@butopen/ssonext-model';
+
 export interface TableService {
   generateTable(): Promise<void>;
 }
@@ -5,16 +7,6 @@ export interface TableService {
 export interface EmailData {
   subject: string;
   body: string;
-}
-
-export interface ServiceData {
-  code: string;
-  name: string;
-  email: string;
-  color: string;
-  emailText: {
-    welcome: EmailData;
-  };
 }
 
 export interface TenantData {
@@ -26,3 +18,8 @@ export type UserRole =
   | 'TENANT_USER'
   | 'EMAIL_CONFIRMED'
   | 'EMAIL_NOT_CONFIRMED';
+
+export interface EmailInformation {
+  emailSubject?: string;
+  emailBody?: string;
+}

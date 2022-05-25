@@ -1,0 +1,12 @@
+{
+  "name": "@butopen/ssonext-model",
+  "version": "1.0.1",
+  "description": "Model for the butopen ssonext project",
+  "types": "./ssonext.model.ts",
+  "main": "index.js",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

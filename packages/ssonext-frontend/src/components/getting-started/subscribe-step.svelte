@@ -1,29 +1,57 @@
 <script lang="ts">
-  import { loggedWritable } from '../../shared/store.util';
   import { fade } from 'svelte/transition';
-  import { createEventDispatcher } from 'svelte';
-
-  const dispatch = createEventDispatcher();
+  import { forgotPassword, subscribeTenant } from '../../services/api.service';
+  import { _if } from '../../shared/if.svelte-action';
+  import { loggable, mergeable } from '../../shared/store.util';
 
   const emailRegexp =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i;
 
-  export const subscribeStore = loggedWritable({
-    email: '',
-    emailEmpty: false,
-    emailError: false,
-    emailRegistered: false
-  });
+  export const subscribeStore = loggable(
+    mergeable({
+      email: '',
+      foundTenant: '',
+      emailEmpty: false,
+      emailSent: false,
+      emailError: false,
+      emailExists: false,
+      loading: false
+    })
+  );
 
   function register() {
+    $subscribeStore.loading = true;
     $subscribeStore.emailEmpty = false;
     $subscribeStore.emailError = false;
+    $subscribeStore.emailExists = false;
     if (!$subscribeStore.email) $subscribeStore.emailEmpty = true;
     else if (!emailRegexp.test($subscribeStore.email)) $subscribeStore.emailError = true;
     else {
-      $subscribeStore.emailRegistered = true;
-      dispatch('email-change', { email: $subscribeStore.email });
+      onEmailChange($subscribeStore.email);
     }
+  }
+
+  async function onEmailChange(email: string) {
+    $subscribeStore.emailExists = false;
+    const result = await subscribeTenant(email);
+    console.log('result: ', result);
+    if (result.error) {
+      if (result.code == 'email-exists') {
+        $subscribeStore.emailExists = true;
+        $subscribeStore.foundTenant = result.tenant;
+      }
+    } else {
+      $subscribeStore.emailSent = true;
+    }
+    $subscribeStore.loading = false;
+  }
+
+  async function onForgotPassword() {
+    $subscribeStore.emailExists = false;
+    const response = await forgotPassword(
+      $subscribeStore.email,
+      $subscribeStore.foundTenant
+    );
   }
 </script>
 
@@ -45,7 +73,13 @@
     required
     on:keyup={(e) => e.key === 'Enter' && register()}
     bind:value={$subscribeStore.email} />
-  <button class="bo-button lg ml-2" on:click={register}>START</button>
+  <button
+    class:disabled={$subscribeStore.loading || !$subscribeStore.email}
+    class="bo-button lg ml-2"
+    on:click={register}>
+    START
+  </button>
+  <div class="bo-loading ml-2" use:_if={$subscribeStore.loading} />
 </div>
 
 {#if $subscribeStore.emailEmpty}
@@ -56,8 +90,15 @@
     * Please check your email for errors
   </div>
 {/if}
-{#if $subscribeStore.emailRegistered}
+{#if $subscribeStore.emailExists}
+  <div class="bo-box-error">
+    * This email already exists. If you forgot your password, click below to reset it:
+    <br />
+    <a class="bo-link" on:click={onForgotPassword}>Forgot password</a>
+  </div>
+{/if}
+{#if $subscribeStore.emailSent}
   <div transition:fade class="bo-box-success mt-4">
-    We sent you an email. Please check to proceed to step 2.
+    We sent you an email. Please check it to proceed to step 2.
   </div>
 {/if}

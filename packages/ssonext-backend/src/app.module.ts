@@ -13,6 +13,7 @@ import { UserAPIController } from './user/user-api.controller';
 import { SharedModule } from './shared/shared.module';
 import { TenantController } from './tenant/tenant.controller';
 import { TenantService } from './tenant/tenant.service';
+import { InjectorService } from './shared/find-injected-service.function';
 
 const messages = loadMessages();
 
@@ -39,6 +40,7 @@ const messages = loadMessages();
     TenantService,
     UserService,
     UserController,
+    InjectorService,
   ],
 })
 export class AppModule {}

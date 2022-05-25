@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { defaultTenantConfig, TenantConfiguration } from './tenant.model';
 import { DB } from '../shared/postgres-db.service';
-import { ServiceData, TenantData } from '../shared/ssonext.model';
 import { SnTenant } from '../generated/gdb-ssonext-test-tables';
+import { ServiceData } from '@butopen/ssonext-model';
+import { TenantData } from '../shared/ssonext.model';
 
 @Injectable()
 export class TenantService {
@@ -66,8 +67,25 @@ GRANT SELECT ON sn_user TO "${tenant}";
     return result[0].tenantid;
   }
 
-  async configuration(tenant: string): Promise<TenantConfiguration> {
-    return defaultTenantConfig();
+  async configuration(tenant: string): Promise<ServiceData> {
+    const found = await this.loadService(tenant);
+    return (
+      found ?? {
+        code: 'ssonext',
+        name: 'SSONext',
+        color: '#00d789',
+        email: 'info@ssonext.com',
+        destinationUrl: 'https://ssonext.com/app/dashboard',
+      }
+    );
+  }
+
+  async exists(tenantServiceName: string): Promise<boolean> {
+    const q = `select service from ${this.tableName} where service = $1 limit 1`;
+    const result = await this.db.query<{ service: string }>(q, [
+      tenantServiceName,
+    ]);
+    return result.length > 0;
   }
 
   async findTenantByEmail(email: string) {
@@ -82,10 +100,16 @@ GRANT SELECT ON sn_user TO "${tenant}";
     return result;
   }
 
-  async loadService(tenant: string, service: ServiceData) {
-    const q = `select data from ${this.tableName} where tenantid = $1`;
-    const result = await this.db.query(q, [tenant]);
-    return result;
+  async loadService(tenant: string) {
+    const q = `select data from ${this.tableName} where data ->> 'code' = $1`;
+    const result = await this.db.query<{ data: ServiceData }>(q, [tenant]);
+    return result[0] ? result[0].data : null;
+  }
+
+  async tenantIdFromCode(tenant: string) {
+    const q = `select tenantid from ${this.tableName} where data ->> 'code' = $1`;
+    const result = await this.db.query<{ tenantid: string }>(q, [tenant]);
+    return result[0] ? result[0].tenantid : null;
   }
 
   async deleteTenant(tenantid: string) {

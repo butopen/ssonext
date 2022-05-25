@@ -1,9 +1,19 @@
-import {Inject} from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
+let injector: InjectorService;
 
-export function findInjectedService(c){
-    const serviceInjector = Inject(c)
-    const serviceSupplier = {instance: null}
-    serviceInjector(serviceSupplier, "instance")
-    return serviceSupplier.instance
+export function findInjectedService(c) {
+  return injector.get(c);
+}
+
+@Injectable()
+export class InjectorService {
+  constructor(private moduleRef: ModuleRef) {
+    injector = this;
+  }
+
+  get(c) {
+    return this.moduleRef.get(c);
+  }
 }

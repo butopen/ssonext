@@ -19,6 +19,7 @@ import { EmailService } from '../email/email.service';
 import { MessageService } from '../message/message.service';
 import { CryptService } from '../crypt/crypt.service';
 import { Tenant } from '../tenant/tenant.decorator';
+import { EmailInformation } from '../shared/ssonext.model';
 
 @Controller('user')
 export class UserController {
@@ -33,18 +34,19 @@ export class UserController {
   ) {}
 
   @Post('login')
-  async login(@Body() user: SNLoginUser, @Query('tenant') tenant: string) {
+  async login(@Body() user: SNLoginUser, @Query('tenant') tenantCode: string) {
+    const tenant = await this.tenantService.tenantIdFromCode(tenantCode);
     const found = await this.userService.findUser(
       user.email.trim().toLowerCase(),
       user.password.trim(),
       tenant,
     );
     const tenantConfig = await this.tenantService.configuration(tenant);
-    const informationFields = tenantConfig.informationFieldsInToken;
+    const informationFields = tenantConfig.userTokenFields;
     if (found.length > 0) {
       let information = {};
       if (informationFields == '*') information = found[0].info;
-      else if (informationFields.length > 0) {
+      else if (informationFields && informationFields.length > 0) {
         const fields = informationFields.split(',');
         for (const f of fields) information[f] = found[0].info[f];
       }
@@ -52,16 +54,22 @@ export class UserController {
         id: this.cryptService.encode(found[0].userid),
         email: user.email,
         roles: found[0].roles,
+        tenant,
         information,
       });
-      return { token };
+      return { token, destinationUrl: tenantConfig.destinationUrl };
     } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
   @Post('request-registration')
-  async register(@Body() user: SNUserWithoutId, @Query('tenant') t: string) {
-    const tenant = this.verifyTenant(t, user);
-    const tenantConfig = await this.tenantService.configuration(tenant);
+  async register(
+    @Body()
+    user: SNUserWithoutId & EmailInformation,
+    @Query('tenant') t: string,
+  ) {
+    const tenantCode = this.verifyTenant(t, user);
+    const tenant = await this.tenantService.tenantIdFromCode(tenantCode);
+    const tenantConfig = await this.tenantService.configuration(tenantCode);
     const info = { ...user };
     delete info.email;
     delete info.password;
@@ -80,26 +88,26 @@ export class UserController {
     const token = this.tokenService.generate({
       user,
       userid: result[0].userid,
-      tenant,
+      tenant: tenantCode,
     });
     console.log('token: ', token);
     const link =
       this.configService.backend_url + '/api/user/register?token=' + token;
     await this.emailService.send(
       user.email,
-      this.messageService.get('email.welcome-subject'),
+      this.messageService.get(user.emailSubject || 'email.welcome-subject'),
       `
+        ${this.messageService.get(user.emailBody || 'email.welcome-body', {
+          name: (user.info as { name: string })?.name ?? 'user',
+        })}
         
-        ${this.messageService.get('email.welcome-body')}
-        
-        ${link}
+        ${user.emailBody?.indexOf('$link') == -1 ? '' : link}
         
         `,
     );
     return { ok: true };
   }
 
-  @Redirect('https://ssonext.com/error', 302)
   @Get('register')
   async confirmRegistration(@Query('token') token: string) {
     try {
@@ -113,38 +121,45 @@ export class UserController {
       const user = data.user;
       user.email = user.email.trim().toLowerCase();
       user.password = user.password.trim();
+      let tenantId = await this.tenantService.tenantIdFromCode(data.tenant);
       const foundUsers = await this.userService.findUserById(
         data.userid,
-        data.tenant,
+        tenantId,
       );
       if (foundUsers.length == 0)
         throw new HttpException(`Cannot find this user: ${token}`, 404);
       await this.userService.updateUserRoles(
         data.userid,
         ['EMAIL_CONFIRMED', 'USER'],
-        data.tenant,
+        tenantId,
       );
       console.log('user saved into db');
+      const loginToken = this.tokenService.generate({
+        id: this.cryptService.encode(data.userid),
+        email: user.email,
+        roles: data.roles,
+        tenant: data.tenant,
+        information: foundUsers[0].info,
+      });
       return {
-        url:
-          this.configService.backend_url +
-          '/pages/registration-welcome?registered=' +
-          token,
+        url: `${this.configService.backend_url}/app/dashboard?token=${loginToken}`,
       };
     } catch {
       return {
-        url:
-          this.configService.backend_url +
-          '/pages/registration-welcome?error=' +
-          token,
+        url: this.configService.backend_url + '/app/error?error=' + token,
       };
     }
   }
 
-  @Get('forgot-password')
+  @Post('forgot-password')
   async forgotPassword(
-    @Query('email') email: string,
-    @Query('tenant') tenant: string,
+    @Body()
+    {
+      email,
+      tenant,
+      emailSubject,
+      emailBody,
+    }: { email: string; tenant: string } & EmailInformation,
   ) {
     const tconf = await this.tenantService.configuration(tenant);
     const token = this.tokenService.generate({ email, tenant });
@@ -154,11 +169,11 @@ export class UserController {
       token;
     await this.emailService.send(
       email.trim().toLowerCase(),
-      this.messageService.get('password-forgot.email-subject', {
-        service: tconf.serviceName,
+      this.messageService.get(emailSubject || 'password-forgot.email-subject', {
+        service: tconf.code,
       }),
-      this.messageService.get('password-forgot.email-body', {
-        service: tconf.serviceName,
+      this.messageService.get(emailBody || 'password-forgot.email-body', {
+        service: tconf.code,
         link,
       }),
     );
@@ -166,16 +181,17 @@ export class UserController {
   }
 
   @Post('reset-password')
-  async resetPassword(resetData: { token: string; password: string }) {
+  async resetPassword(@Body() resetData: { token: string; password: string }) {
     const token = this.tokenService.verify(resetData.token);
+    const tenant = await this.tenantService.tenantIdFromCode(token.tenant);
     let user = await this.userService.findUserByEmail(
       token.email.trim().toLowerCase(),
-      token.tenant,
+      tenant,
     );
     await this.userService.resetUserPassword(
       user[0].userid,
       resetData.password.trim(),
-      token.tenant,
+      tenant,
     );
     return { ok: true };
   }
@@ -183,12 +199,12 @@ export class UserController {
   @Get('email-exists')
   async checkEmail(
     @Query('email') email: string,
-    @Headers('tenant') tenant: string,
+    @Query('tenant') tenant: string,
   ) {
-    const t = tenant || '1';
+    const tenantId = await this.tenantService.tenantIdFromCode(tenant);
     let exists = await this.userService.userWithEmailExists(
       email.trim().toLowerCase(),
-      t,
+      tenantId,
     );
     return { exists };
   }

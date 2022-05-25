@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "node_modules/@butopen/design-system/src/index";
+@import 'node_modules/@butopen/design-system/src/index';
 
 :root {
   --bo-theme-color: #00d789;
 }
 
 .bo-tab {
-  @apply uppercase text-sm
+  @apply text-sm uppercase;
 }
 
 a {
@@ -18,9 +18,40 @@ a {
 }
 
 body {
-  @extend .use-bo-design-system
+  @extend .use-bo-design-system;
 }
 
 .sso-section {
-  @apply rounded border border-bop p-8
+  @apply rounded border border-bop p-8;
 }
+
+.animate-bg-on-hover {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+  background-size: 50% 50%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  transition: 0.1s;
+
+  &:hover {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+    transition: 0.9s;
+    background-size: 200% 200%;
+  }
+}
+
+.bo-button {
+  @extend .animate-bg-on-hover
+}
+
+.bo-input {
+  @apply bg-gray-50 hover:shadow-sm
+}
+
+.form-error {
+  @apply text-red-500 text-sm;
+  &:before {
+    content: "*";
+    @apply mr-1
+  }
+}
+

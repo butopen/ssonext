@@ -1,21 +1,24 @@
 <script lang="ts">
-  import { loggedWritable } from '../shared/store.util';
   import { createEventDispatcher } from 'svelte';
   import { queryParams } from '../shared/url-params.service';
   import { login, resetPassword } from '../services/api.service';
   import { jwtDecode } from '../shared/jwt-decode.service';
+  import { loggable, mergeable } from '../shared/store.util';
+  import { loginAndMoveToHome } from '../services/app.service';
 
   const dispatch = createEventDispatcher();
 
   const params = queryParams<{ reset: string }>();
 
-  const store = loggedWritable({
-    token: params.reset,
-    password: '',
-    confirmedPassword: '',
-    passwordEmpty: false,
-    passwordDoNotMatch: false
-  });
+  const store = loggable(
+    mergeable({
+      token: params.reset,
+      password: '',
+      confirmedPassword: '',
+      passwordEmpty: false,
+      passwordDoNotMatch: false
+    })
+  );
 
   async function onResetPassword() {
     $store.passwordEmpty = false;
@@ -27,11 +30,9 @@
       const result = await resetPassword($store.password, $store.token);
       if (result.ok) {
         const { email, tenant } = jwtDecode($store.token);
-        const loginResult = await login(email, $store.password, tenant);
-        if (loginResult.token) {
-          localStorage.TOKEN = loginResult.token;
-          window.location.href = '/app';
-        }
+        try {
+          await loginAndMoveToHome(email, $store.password, tenant);
+        } catch {}
       }
     }
   }
@@ -39,7 +40,7 @@
 
 <div class="password-reset sso-section mt-8">
   <h1>Reset your password</h1>
-  <p>Please choos a new password below</p>
+  <p>Please choose a new password below</p>
   <input
     type="password"
     name="password"
